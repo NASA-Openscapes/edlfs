@@ -4,6 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "edlfs"
+authors = [
+    'Luis Lopez <betolin@gmail.com>',
+    'Joseph H. Kennedy <me@jhkennedy.org>',
+]
 description = "An fsspec back-end that supports NASA's Earthdata Login (EDL)"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -26,5 +30,12 @@ dynamic = ["version"]
 [project.urls]
 "Homepage" = "https://github.com/NASA-Openscapes/edlfs"
 "Bug Tracker" = "https://github.com/NASA-Openscapes/edlfs/issues"
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools_scm]
