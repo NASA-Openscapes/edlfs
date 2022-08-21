@@ -21,6 +21,10 @@ dependencies:
 - mkdocs-jupyter=0.18.0
 - pymdown-extensions=9.2
 - pygments=2.11.1
+# build and test
+- setuptools>=45
+- setuptools_scm>=6.2
+# Necessary pip packages
 - pip
 - pip:
   - earthdata
