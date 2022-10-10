@@ -17,7 +17,7 @@ Another aspect of data usability is that NASA supports different patterns for cl
 
 This diagram tries to put the different cloud hosted dataset access patterns into context:
 
-<img src="images/nasa-cloud-access.png" width="50%"/>
+<img src="images/nasa-cloud-access.png" width="80%"/>
 
 
 Code examples:
