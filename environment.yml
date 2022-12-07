@@ -22,8 +22,9 @@ dependencies:
 - pymdown-extensions=9.2
 - pygments=2.11.1
 # build and test
-- setuptools>=45
+- setuptools>=61
 - setuptools_scm>=6.2
+- build
 # Necessary pip packages
 - pip
 - pip:
