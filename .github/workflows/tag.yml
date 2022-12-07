@@ -1,0 +1,19 @@
+name: Tag version
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  call-bump-version-workflow:
+    uses: ASFHyP3/actions/.github/workflows/reusable-bump-version.yml@v0.6.0
+    with:
+      user: ${{ github.actor }}
+      email: ${{ github.actor }}@users.noreply.github.com
+    secrets:
+      USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}

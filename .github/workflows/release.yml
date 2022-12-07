@@ -1,0 +1,19 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  call-release-workflow:
+    uses: ASFHyP3/actions/.github/workflows/reusable-release.yml@v0.6.0
+    with:
+      release_prefix: edlfs
+      sync_pr_label: bot
+    secrets:
+      USER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
