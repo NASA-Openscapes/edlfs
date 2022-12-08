@@ -1,49 +1,108 @@
-# POC for a fsspec back-end that supports NASA's EDL
+# `edlfs`: a fsspec back-end that supports NASA's EDL
 
+Accessing and using NASA's Earth observing data with [`fsspec`](https://filesystem-spec.readthedocs.io/en/latest/), or the software built on top of it like the [Pangeo stack](https://pangeo.io/), is *harder than it should be*. This package aims to abstract those complications away, and provide a convenient Python filesystem interface to NASA's Earth observing data.
 
-# Background motivation
+## Challenges
 
-Python access patterns for NASA datasets behind [Earth Data Login](https://urs.earthdata.nasa.gov/), copied from our [overview.md](https://github.com/NASA-Openscapes/edlfs/blob/dev/docs/overview.md): 
+The challenges this pacakge aims to overcome are detailed in [our overview](docs/overview.md) document, and briefly restated here:
 
-## The issue
+* Most NASA Earth observing dataset require authenticated HTTP access via NASA's [Earthdata Login (EDL)]((https://urs.earthdata.nasa.gov/)). However, [`fsspec`](https://filesystem-spec.readthedocs.io/en/latest/) does not support EDL/OAuth2 out of the box.
+* NASA supports different access patterns for cloud-based and on-prem datasets hosted at the various [Distributed Active Archive Centers (DAACs)](https://www.earthdata.nasa.gov/eosdis/daacs), where each DAAC may support only certain access patterns and auth mechanisms.
+* Handling the above two challenges for large-scale, distributed workflows with tools like Dask adds additional complications. 
 
-[`xarray`](https://docs.xarray.dev/en/stable/) has become the defacto library to access multidimensional data in Python. Used along with the [Pangeo stack](https://pangeo.io/), (`Dask` in particular) unlocks the potential to more efficient and scalable workflows for geospatial data analysis. `xarray` and `Dask` really shine when our data is gridded (processing level 3 and above), in a cloud optimized format and publicly available (not auth wall).  Examples of this can be found in the [Pangeo gallery](http://gallery.pangeo.io/) where TB of data can be processed with simpler code using horizontally scalable infrastructure. 
+`edlfs` is being developed to hide those complications for users so interacting with NASA's Earth observing data, even at global-scale, is straightforward, much like how [`s3fs`](https://github.com/fsspec/s3fs) hides the complications of working with cloud-data from users. 
 
-When earth scientists see the examples in the Pangeo gallery [they often think about using them with NASA datasets](https://discourse.pangeo.io/t/cloud-computing-using-nasa-earthdata-with-earthdata-login/2434). However most of NASA's Earth datasets are not in a cloud optimized format and are behind NASA's [EDL](https://urs.earthdata.nasa.gov/) (Earth Data Login). 
+## Usage
 
-The main technical issue with EDL is that `xarray` and `Dask` the core components of the Pangeo stack use a package called [`fsspec`](https://filesystem-spec.readthedocs.io/en/latest/index.html) to access files over HTTP and `fsspec` does not support OAuth2 out of the box. With local files this is not an issue but when we want to open files behind EDL over the network we run into problems, especially if we want to use a distributed Dask cluster.
-
-Another aspect of data usability is that NASA supports different patterns for cloud-based datasets that introduce some complexity as users have to think about tokens, temporary keys and expiration times. This [white paper](https://docs.google.com/document/d/18GyoMZj0I2HKAXwqyeziO0ISbOwHxo1TN4eAlR4mH3U/view#heading=h.ii2k4b5recft) by Patrick Quinn and others expands on some of these issues and potential solutions. Making cloud hosted data more accessible is very important as NASA is migrating their whole catalog to AWS and eventually will be the only supported distribution.
-
-This diagram tries to put the different cloud hosted dataset access patterns into context:
-
-<img src="images/nasa-cloud-access.png" width="80%"/>
-
-
-Code examples:
+### Quick start
 
 ```python
-import xarray as xr
+import edlfs
 
-file = "https://data.nsidc.earthdatacloud.nasa.gov/nsidc-cumulus-prod-protected/ATLAS/ATL08/005/2018/10/14/ATL08_20181014001049_02350102_005_01.h5"
-# will this work?
-ds = xr.open_dataset(file, engine="h5netcdf")
-ds
+print(edlfs.__version__)
 ```
 
+### Installation
+
+In order to easily manage dependencies, we recommend using dedicated project environments
+via [Anaconda/Miniconda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+or [Python virtual environments](https://docs.python.org/3/tutorial/venv.html).
+
+**NOTE:** `edlfs` will be available on PyPI and conda-forge with the `v0.1.0` release, which is coming soon! Until then, use the [Development](#development) install.
+
+`edlfs` can be installed into a conda environment with
+
+```shell
+conda install -c conda-forge edlfs
+```
+
+or into a virtual environment with
+
+```shell
+python -m pip install edlfs
+```
+
+### Using the Docker image
+`edlfs` provides a [docker container image](https://docs.docker.com/get-started/) with all the necessary dependencies pre-installed. To get the latest released version: 
+```shell
+docker pull ghcr.io/nasa-openscapes/edlfs:latest
+```
+a specific release version (>=v0.1.0 only):
+```shell
+docker pull ghcr.io/nasa-openscapes/edlfs:0.1.0
+```
+or the current development version:
+```shell
+docker pull ghcr.io/nasa-openscapes/edlfs:test
+```
+
+To run the container and jump into a bash shell inside:
+```shell
+docker run -it --rm ghcr.io/nasa-openscapes/edlfs:latest
+```
+To mount your current directory inside the container so that files will be written back to your local machine:
+```shell
+docker run -it -v ${PWD}:/home/conda/work --rm ghcr.io/nasa-openscapes/edlfs:latest
+cd work
+```
+For more docker run options, see: <https://docs.docker.com/engine/reference/run/>.
 
 
-## Potential solutions
+## Contact us!
 
+Found a bug? Want to request a feature?
+[Open an issue](https://github.com/ASFHyP3/NASA-Openscapes/edlfs/new)
 
-Pre-signed `aiohttp` sessions and leveraging the Thing Egress App (TEA)
+General questions? Suggestions? Or anything else?
+[Start a discussion](https://github.com/NASA-Openscapes/edlfs/discussions/new)
 
-<img src="https://raw.githubusercontent.com/asfadmin/thin-egress-app/master/docs/images/tea.png" width="40%" />
+Don't hesitate to reach out; we would love to hear from you!
 
-TODO: expand on this and start developing a new back-end for fsspec 
+## Development
+
+To contribute to `edlfs`, first check out our [Code of Conduct](CODE_OF_CONDUCT.md) and our [contributing guide](docs/CONTRIBUTING.md).
+
+### Development install
+
+To create a development environment for `edlfs`, we recommend using [`conda`](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)/[`mamba`](https://github.com/mamba-org/mamba) to create a development environment. First fork the repo and then:
+```shell
+git clone https://github.com/[OWNER]/edlfs.git
+cd edlfs
+
+mamba env update -f environment.yml  # will create if env. doesn't already exist
+mamba activate edlfs
+
+python -m pip install -e .
+```
+
+*Note:* Each time you go to make new changes/create new feature branches, you may want to ensure the environment and install are up-to-date by running:
+```shell
+# from the repository root
+mamba env update -f environment.yml
+mamba deactivate && mamba activate edlfs
+python -m pip install -e .
+```
 
 ### Collaborators
 
-Feel free to add your name here.
-
-
+Feel free to add your name here, or if you want to sign up to be a maintainer, in the [package authors](pyproject.toml).

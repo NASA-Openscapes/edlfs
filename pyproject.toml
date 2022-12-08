@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "edlfs"
 authors = [
-    'Luis Lopez <betolin@gmail.com>',
-    'Joseph H. Kennedy <me@jhkennedy.org>',
+    {name="Luis Lopez", email="betolin@gmail.com"},
+    {name="Joseph H. Kennedy", email="me@jhkennedy.org"},
 ]
 description = "An fsspec back-end that supports NASA's Earthdata Login (EDL)"
 readme = "README.md"
@@ -14,15 +14,15 @@ requires-python = ">=3.8"
 keywords = ["fsspec", "NASA", "Earthdata"]
 license = {text = "MIT License"}
 classifiers=[
-    'Intended Audience :: Science/Research',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
-    'Natural Language :: English',
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
     "Operating System :: OS Independent",
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
 ]
 dependencies = []
 dynamic = ["version"]
