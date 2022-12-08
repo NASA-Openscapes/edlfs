@@ -1,6 +1,11 @@
 name: Static analysis
 
-on: push
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   call-flake8-workflow:
